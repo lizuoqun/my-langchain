@@ -23,7 +23,7 @@ response1 = model.invoke(messages)
 
 print(f"AI的回复：{response1.content}")
 
-messages.append({"role": "assistant", "content": response1.content})
+messages.append({"role": "assistant", "content": str(response1.content)})
 
 messages.append({"role": "user", "content": "我刚刚问了你什么问题？"})
 

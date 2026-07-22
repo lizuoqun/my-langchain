@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from langchain_deepseek import ChatDeepSeek
 from langchain_openai import ChatOpenAI
+from pydantic import SecretStr
 
 load_dotenv(override=True)
 
@@ -25,7 +26,7 @@ model = ChatDeepSeek(
 # 使用OpenAI这个进行兼容写法
 openAiModel = ChatOpenAI(
     model="deepseek-v4-flash",
-    api_key=DEEPSEEK_API_KEY,
+    api_key=SecretStr(DEEPSEEK_API_KEY) if DEEPSEEK_API_KEY else None,
     base_url=DEFAULT_API_BASE,
 )
 

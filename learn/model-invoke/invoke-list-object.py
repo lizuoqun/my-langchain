@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
-from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, BaseMessage
 
 load_dotenv(override=True)
 
@@ -15,7 +15,7 @@ model = init_chat_model(
     base_url=DEFAULT_API_BASE,
 )
 
-messages = [
+messages: list[BaseMessage] = [
     SystemMessage("你是一个专业的翻译员"),
     HumanMessage("帮我把您吃了吗翻译成英语")
 ]
