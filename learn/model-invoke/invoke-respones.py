@@ -1,5 +1,6 @@
 import os
 
+# from rich import print as rprint
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 
@@ -15,6 +16,7 @@ model = init_chat_model(
 )
 
 response = model.invoke("你是谁？")
+# rprint(response)
 
 metadata = response.response_metadata
 print(f"使用的模型: {metadata['model_name']}")
