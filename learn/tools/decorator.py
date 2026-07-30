@@ -59,5 +59,4 @@ weather_schema = {
 def get_weather(city: str, dt: str, unit: Literal["c", "f"]):
     return f"日期：{dt}，{city}阳光明媚，单位：{unit}"
 
-
 rprint(convert_to_openai_tool(get_weather))
