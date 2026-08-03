@@ -16,4 +16,7 @@ LANGSMITH_PROJECT="my-langchain"
 
 # Agent内置工具TavilySearch搜索的key
 TAVILY_API_KEY=tvly-dev-crazyThursdayvme50
+
+# PostgreSQL链接配置
+POSTGRES_SQL_URL=“postgresql://admin:123456@localhost:5432/langchain_db?sslmode=disable”
 ```

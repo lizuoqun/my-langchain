@@ -11,6 +11,8 @@ load_dotenv(override=True)
 
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 DEFAULT_API_BASE = os.getenv("DEFAULT_API_BASE")
+POSTGRES_SQL_URL = os.getenv("POSTGRES_SQL_URL")
+assert POSTGRES_SQL_URL is not None, "环境变量 POSTGRES_SQL_URL 未配置"
 
 model = init_chat_model(
     model="deepseek:deepseek-v4-flash",
@@ -19,8 +21,7 @@ model = init_chat_model(
     extra_body={"thinking": {"type": "disabled"}}
 )
 
-DB_URL = "postgresql://admin:123456@localhost:5432/langchain_db?sslmode=disable"
-with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
+with PostgresSaver.from_conn_string(POSTGRES_SQL_URL) as checkpointer:
     # 初始化postgre sql数据库
     checkpointer.setup()
 
