@@ -13,4 +13,7 @@ LANGSMITH_ENDPOINT=https://api.smith.LangChain.com
 LANGSMITH_API_KEY=lsv2_pt_crazyThursdayvme50
 # 自定义项目名称，可以在Langsmith WebUI监控页面根据名称查看对应的运行记录
 LANGSMITH_PROJECT="my-langchain"
+
+# Agent内置工具TavilySearch搜索的key
+TAVILY_API_KEY=tvly-dev-crazyThursdayvme50
 ```
