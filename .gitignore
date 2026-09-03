@@ -44,6 +44,7 @@ htmlcov/
 logs/
 *.log
 *.tmp
+graph.png
 
 node_modules/
 
