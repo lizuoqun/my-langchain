@@ -75,12 +75,12 @@ builder.add_node(node_a)  # type: ignore[arg-type]
 builder.add_node(node_b)  # type: ignore[arg-type]
 builder.add_node(node_c)  # type: ignore[arg-type]
 
-builder.add_conditional_edges(START, router)
-# builder.add_conditional_edges(START, router_by_path_map, path_map={
-#     "poem": "node_a",
-#     "joke": "node_b",
-#     "ci_poem": "node_c",
-# })
+# builder.add_conditional_edges(START, router)
+builder.add_conditional_edges(START, router_by_path_map, path_map={
+    "poem": "node_a",
+    "joke": "node_b",
+    "ci_poem": "node_c",
+})
 
 builder.add_edge("node_a", END)
 builder.add_edge("node_b", END)
@@ -94,3 +94,6 @@ png_bytes = graph.get_graph().draw_mermaid_png()
 png_filename = "graph.png"
 with open(png_filename, "wb") as f:
     f.write(png_bytes)
+
+raw_mermaid = graph.get_graph().draw_mermaid()
+print(raw_mermaid)

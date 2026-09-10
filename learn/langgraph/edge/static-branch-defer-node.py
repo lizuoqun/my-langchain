@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal
+from typing import TypedDict
 
 from langchain_deepseek import ChatDeepSeek
 from langgraph.graph import StateGraph, START
@@ -22,7 +22,6 @@ class OverAllState(TypedDict):
     topic: str
     poem: str
     joke: str
-    content_type: str
 
 
 # 返回值类型为OverAllState，加上TypedDict要求完整性返回，这里我们只做部分返回，所以可以采用dict[str,str]
@@ -47,33 +46,29 @@ def node_b(state: OverAllState) -> dict[str, str]:
     }
 
 
-def router(state: OverAllState) -> Literal["node_a", "node_b"]:
-    if "诗" in state["content_type"]:
-        return "node_a"
-    return "node_b"
-
-
-def router_by_path_map(state: OverAllState) -> Literal["a", "b"]:
-    if "诗" in state["content_type"]:
-        return "a"
-    return "b"
+def node_c(state: OverAllState):
+    print("最后执行", state)
 
 
 builder = StateGraph(state_schema=OverAllState)  # type: ignore[arg-type]
 builder.add_node(node_a)  # type: ignore[arg-type]
 builder.add_node(node_b)  # type: ignore[arg-type]
+# builder.add_node(node_c)  # type: ignore[arg-type]
+builder.add_node(node_c, defer=True)  # type: ignore[arg-type]
 
-# builder.add_conditional_edges(START, router)
-builder.add_conditional_edges(START, router_by_path_map, path_map={
-    "a": "node_a",
-    "b": "node_b"
-})
+
+builder.add_edge(START, "node_a")
+builder.add_edge(START, "node_b")
+builder.add_edge(START, "node_c")
 
 graph = builder.compile()
-result = graph.invoke({"topic": "青山", "content_type": "诗"})
+result = graph.invoke({"topic": "小猫"})
 print(result)
+
+png_bytes = graph.get_graph().draw_mermaid_png()
+png_filename = "graph.png"
+with open(png_filename, "wb") as f:
+    f.write(png_bytes)
 
 raw_mermaid = graph.get_graph().draw_mermaid()
 print(raw_mermaid)
-
-
