@@ -1,6 +1,7 @@
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
 from langchain_deepseek import ChatDeepSeek
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.checkpoint.postgres import PostgresSaver
 from langgraph.graph import StateGraph, START, END, MessagesState
 from langchain.messages import HumanMessage
@@ -56,17 +57,5 @@ with PostgresSaver.from_conn_string(POSTGRES_SQL_URL) as checkpointer:
         }
     }
 
-    config2: RunnableConfig = {
-        "configurable": {
-            "thread_id": "thread-002"
-        }
-    }
-
     res = graph.invoke({"messages": HumanMessage("我叫Modify")}, config=config)
     print(res["output"], '\n\n\n\n\n\n')
-
-    res1 = graph.invoke({"messages": HumanMessage("我叫什么")}, config=config)
-    print(res1["output"], '\n\n\n\n\n\n')
-
-    res2 = graph.invoke({"messages": HumanMessage("我叫什么")}, config=config2)
-    print(res2["output"])
