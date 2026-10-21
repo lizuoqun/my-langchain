@@ -32,6 +32,7 @@ graph = builder.compile()
 chunks = graph.stream(
     {"initial_state": "初始状态"},
     stream_mode=["values"],
+    version="v2"
 )
 
 for chunk in chunks:
