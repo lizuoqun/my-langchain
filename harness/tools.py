@@ -1,6 +1,5 @@
 from openai import OpenAI
-import os
-import json
+import os, json
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -74,7 +73,9 @@ def agent(query: str) -> str:
                 'content': tool_output or '',
             })
 
-    print('完整的messages：', messages)
+    print('完整的messages：')
+    for message in messages:
+        print(message)
     return messages[-1]['content']
 
 
