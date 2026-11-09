@@ -176,7 +176,7 @@ def pattern_of(tool_calls) -> str:
         return "*"
 
     if tool_calls.name == "bash":
-        return f""
+        return f"{parts[0]} *" if len(parts) > 1 else parts[0]
 
     if tool_calls.name in ['write_file', "edit_file"]:
         path = args.get("path")
@@ -281,7 +281,7 @@ def agent(query: str) -> str:
             else:
                 tool_output = execute_tool(name, args)
 
-            print(f"执行：{name}，{args}----allow_set：{allow_set}")
+            print(f"每次工具执行：{name}，{args}----allow_set：{allow_set}")
             messages.append({
                 'role': 'tool',
                 'tool_call_id': tool_call.id,
