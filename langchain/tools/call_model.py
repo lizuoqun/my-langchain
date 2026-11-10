@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AnyMessage
 from langchain_core.tools import tool
 
 load_dotenv(override=True)
@@ -25,7 +25,7 @@ def get_weather(city: str) -> str:
     return city + '阳光明媚'
 
 
-messages = [
+messages: list[AnyMessage] = [
     HumanMessage("北京天气如何？")
 ]
 
