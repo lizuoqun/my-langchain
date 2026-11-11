@@ -1,4 +1,4 @@
-import json, os, re, yaml
+import json, os, re, urllib.request, yaml
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -72,10 +72,10 @@ class SkillLoader:
 
 SKILL_LOADER = SkillLoader(SKILLS_DIR)
 
-SYSTEM_PROMPT = f"""你是一位甜品店店员，用中文简要回答。
+SYSTEM_PROMPT = f"""你是一个乐于助人的助手，用中文简要回答。
 
-遇到你不了解的内容（例如本店菜单、价格、推荐），必须先调用 load_skill 工具加载对应技能，
-拿到技能内容后再回答，不要自己编造。
+遇到你不了解的领域，必须先调用 load_skill 工具加载对应技能，拿到技能内容后再回答，不要自己编造。
+技能正文里可能会要求你调用其它工具（例如 http_get 发请求），请严格按要求执行。
 
 当前可用技能：
 {SKILL_LOADER.get_descriptions()}"""
@@ -97,14 +97,42 @@ tool_list: list = [
                 "required": ["skill_name"]
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "http_get",
+            "description": "向指定 URL 发送 GET 请求并返回响应内容，用于获取技能中要求的实时数据",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "url": {"type": "string", "description": "完整的请求地址，必须以 http:// 或 https:// 开头"},
+                    "max_chars": {"type": "integer", "description": "最大返回字符数，默认 4000"}
+                },
+                "required": ["url"]
+            }
+        }
     }
 ]
+
+
+def http_get(url: str, max_chars: int = 4000) -> str:
+    """真正发请求的地方，技能本身不执行代码，由这里执行"""
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            raw = resp.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        return f"Error fetching {url}: {e}"
+    return raw[:max_chars]
 
 
 def execute_tool(name: str, args: str) -> str:
     args = json.loads(args)
     if name == "load_skill":
         return SKILL_LOADER.get_content(args["skill_name"])
+    if name == "http_get":
+        return http_get(args["url"], args.get("max_chars", 4000))
     return f"未知工具：{name}"
 
 
@@ -132,9 +160,9 @@ def agent(query: str) -> str:
             if not isinstance(tool_call, ChatCompletionMessageFunctionToolCall):
                 continue
             name, args = tool_call.function.name, tool_call.function.arguments
-            print(f"[调用技能] {name} 参数：{args}")
+            print(f"[调用工具] {name} 参数：{args}")
             tool_output = execute_tool(name, args)
-            print(f"[技能加载] 已注入 {len(tool_output)} 个字符的技能正文")
+            print(f"[工具返回] {tool_output[:120]}")
             messages.append({
                 "role": "tool",
                 "tool_call_id": tool_call.id,
